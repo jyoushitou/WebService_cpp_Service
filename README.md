@@ -3,6 +3,8 @@
 > WebServer 单体架构遗留下来的**通用服务层代码**，包含用户线程管理、任务系统和工具函数。
 
 ![C++](https://img.shields.io/badge/C++-17-%2300599C?style=flat-square&logo=c%2B%2B)
+![MySQL](https://img.shields.io/badge/MySQL-8-%234479A1?style=flat-square&logo=mysql)
+![Docker](https://img.shields.io/badge/Docker-24-%232496ED?style=flat-square&logo=docker)
 
 ---
 
@@ -14,7 +16,7 @@ Service 子仓库包含从原单体架构 C++ HTTP 服务器中提炼出的**通
 - **任务系统** — 异步任务投递、处理和查询
 - **工具函数** — 日志输出、JSON 解析、Token 认证
 
-> ⚠️ **注意**：此仓库为单体架构过渡到微服务架构过程中的中间产物。其中的线程模型和任务系统已被 GRPCGateway 使用，部分工具函数已存在多处副本。后续将逐步整合到统一的基础库中。
+> ⚠️ **注意**：此仓库为单体架构过渡到微服务架构过程中的中间产物。其中的线程模型和任务系统已被 RPCGateway 使用，部分工具函数已存在多处副本。后续将逐步整合到统一的基础库中。
 
 ---
 
@@ -149,7 +151,8 @@ Service/
 ## 🔗 依赖关系
 
 ```
-GRPCGateway ──依赖──► Service 组件
+
+RPCGateway ──依赖──► Service 组件
                         │
                         ├── Task.h/cpp
                         ├── UserThread.h/cpp
@@ -158,7 +161,7 @@ GRPCGateway ──依赖──► Service 组件
                                └── MySQL 子仓库（MyMySQL.h）
 ```
 
-GRPCGateway 直接引用了 Service 中的：
+RPCGateway 直接引用了 Service 中的：
 - `Task.h` / `Task.cpp` — 任务系统
 - `UserThread.h` / `UserThread.cpp` — 用户线程管理
 - `Utils.h` / `Utils.cpp` — 工具函数
@@ -166,8 +169,7 @@ GRPCGateway 直接引用了 Service 中的：
 ---
 
 ## 🛠️ 构建说明
-
-Service 组件通常作为 GRPCGateway 的内联代码一起编译，不单独构建。
+Service 组件通常作为 RPCGateway 的内联代码一起编译，不单独构建。
 
 如需独立编译，可以参考以下 CMake 配置：
 
@@ -191,7 +193,7 @@ target_include_directories(service_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 ## 📋 后续规划
 
-- [ ] **重构为独立基础库** — 消除与 GRPCGateway 和 MySQL 仓库中的代码重复
+- [ ] **重构为独立基础库** — 消除与 RPCGateway 和 MySQL 仓库中的代码重复
 - [ ] **提取通用工具为独立模块** — Utils、Auth、Json 拆分为独立组件
 - [ ] **线程模型标准化** — 适配 gRPC 异步模型
 - [ ] **单元测试覆盖** — 为任务系统编写完整的单元测试
